@@ -145,8 +145,13 @@ const CustomerHome: React.FC = () => {
         <div className="flex-1 overflow-y-auto pr-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map(product => (
-              <div key={product._id} className="bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col">
+              <div key={product._id} className="bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col relative">
                 <img src={product.image} className="h-44 w-full object-cover" alt={product.name} />
+                {product.stock === 0 && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                    <span className="text-white text-xl font-bold">SOLD OUT</span>
+                  </div>
+                )}
                 <div className="p-5 flex-1 flex flex-col">
                   <h3 className="font-bold text-lg mb-1">{product.name}</h3>
                   <p className="text-[#27AE60] font-bold text-xl mb-4">Rp {product.price.toLocaleString()}</p>
