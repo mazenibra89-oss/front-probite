@@ -217,8 +217,8 @@ const CustomerHome: React.FC = () => {
             </div>
             <button 
               onClick={handleCheckout}
-              disabled={!selectedCity || isLoading}
-              className="w-full bg-[#C0392B] text-white py-4 rounded-2xl font-bold shadow-lg shadow-red-200"
+              disabled={!(selectedCity === 'Semarang' || selectedCity === 'Jogja') || isLoading}
+              className="w-full bg-[#C0392B] text-white py-4 rounded-2xl font-bold shadow-lg shadow-red-200 disabled:bg-gray-300"
             >
               {isLoading ? 'Memproses...' : 'Checkout'}
             </button>
