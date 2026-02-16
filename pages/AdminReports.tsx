@@ -7,6 +7,7 @@ const AdminReports: React.FC = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
   const [range, setRange] = useState<'date' | '7days' | '30days'>('date');
+  const [cityFilter, setCityFilter] = useState<'Semarang' | 'Jogja' | 'ALL'>('ALL');
 
   // Ambil data dari backend
   useEffect(() => {
@@ -34,7 +35,9 @@ const AdminReports: React.FC = () => {
   // Filter data: hanya transaksi yang sudah dibayar
   const today = new Date();
   let filteredData = (transactions || []).filter(t => t.createdAt && t.paid);
-
+  if (cityFilter !== 'ALL') {
+    filteredData = filteredData.filter(t => t.city === cityFilter);
+  }
   let label = '';
   if (range === 'date') {
     filteredData = filteredData.filter(t => t.createdAt.startsWith(filterDate));
@@ -105,6 +108,21 @@ const AdminReports: React.FC = () => {
                     {r === 'date' ? 'Harian' : r === '7days' ? '7 Hari' : '30 Hari'}
                 </button>
             ))}
+         </div>
+         {/* City Filter Buttons */}
+         <div className="flex gap-2 ml-auto">
+           <button
+             onClick={() => setCityFilter('ALL')}
+             className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${cityFilter === 'ALL' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}
+           >Semua</button>
+           <button
+             onClick={() => setCityFilter('Semarang')}
+             className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${cityFilter === 'Semarang' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}
+           >Semarang</button>
+           <button
+             onClick={() => setCityFilter('Jogja')}
+             className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${cityFilter === 'Jogja' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}
+           >Jogja</button>
          </div>
       </div>
 
