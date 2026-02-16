@@ -156,17 +156,34 @@ const AdminProducts: React.FC = () => {
           <div className="bg-white rounded-[2.5rem] w-full max-w-2xl p-8 overflow-y-auto max-h-screen">
              <h3 className="text-2xl font-bold mb-6">{editId ? 'Edit Produk' : 'Tambah Produk'}</h3>
              <form onSubmit={handleSubmit} className="space-y-4">
+                <label className="block font-bold mb-1">Nama Produk</label>
                 <input className="w-full p-3 rounded-xl bg-gray-50" placeholder="Nama Produk" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
+
+                <label className="block font-bold mb-1">Kategori</label>
                 <select className="w-full p-3 rounded-xl bg-gray-50" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} required>
                   {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
+
                 <div className="grid grid-cols-2 gap-4">
-                  <input type="number" className="p-3 rounded-xl bg-gray-50" placeholder="HPP" value={formData.hpp} onChange={e => setFormData({...formData, hpp: +e.target.value})} />
-                  <input type="number" className="p-3 rounded-xl bg-gray-50" placeholder="Harga Jual" value={formData.price} onChange={e => setFormData({...formData, price: +e.target.value})} />
+                  <div>
+                    <label className="block font-bold mb-1">HPP</label>
+                    <input type="number" className="p-3 rounded-xl bg-gray-50 w-full" placeholder="HPP" value={formData.hpp} onChange={e => setFormData({...formData, hpp: +e.target.value})} />
+                  </div>
+                  <div>
+                    <label className="block font-bold mb-1">Harga Jual</label>
+                    <input type="number" className="p-3 rounded-xl bg-gray-50 w-full" placeholder="Harga Jual" value={formData.price} onChange={e => setFormData({...formData, price: +e.target.value})} />
+                  </div>
                 </div>
+
+                <label className="block font-bold mb-1">Stok</label>
                 <input type="number" className="w-full p-3 rounded-xl bg-gray-50" placeholder="Stok" value={formData.stock} onChange={e => setFormData({...formData, stock: +e.target.value})} />
+
+                <label className="block font-bold mb-1">URL Gambar</label>
                 <input className="w-full p-3 rounded-xl bg-gray-50" placeholder="URL Gambar" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} />
+
+                <label className="block font-bold mb-1">Deskripsi</label>
                 <textarea className="w-full p-3 rounded-xl bg-gray-50" placeholder="Deskripsi" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
+
                 <div className="flex gap-2">
                   <button type="button" onClick={() => setShowModal(false)} className="flex-1 p-4 bg-gray-100 rounded-2xl font-bold">Batal</button>
                   <button type="submit" className="flex-1 p-4 bg-[#C0392B] text-white rounded-2xl font-bold">{isLoading ? 'Menyimpan...' : 'Simpan'}</button>
