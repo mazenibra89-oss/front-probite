@@ -142,7 +142,7 @@ const CustomerHome: React.FC = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="flex-1 overflow-y-auto pr-2">
+        <div className="flex-1 overflow-y-auto pr-2 pb-32 md:pb-0">{/* Tambah pb-32 untuk mobile jika cart muncul */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map(product => (
               <div key={product._id} className="bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col relative">
