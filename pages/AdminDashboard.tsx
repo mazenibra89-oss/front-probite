@@ -6,6 +6,7 @@ const API_URL = 'https://api-probite.exium.my.id';
 const AdminDashboard: React.FC = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSales = async () => {
@@ -39,6 +40,27 @@ const AdminDashboard: React.FC = () => {
     { label: 'Stok Kritis', value: '0', icon: <Users className="text-orange-500" />, color: 'bg-orange-50' },
   ];
 
+  // Fungsi untuk update status pembayaran
+  const handleTogglePaid = async (id: string, currentStatus: boolean) => {
+    setUpdatingId(id);
+    try {
+      const res = await fetch(`${API_URL}/api/sales/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paid: !currentStatus })
+      });
+      if (res.ok) {
+        setTransactions(transactions => transactions.map(t => t._id === id ? { ...t, paid: !currentStatus } : t));
+      } else {
+        alert('Gagal update status pembayaran!');
+      }
+    } catch (err) {
+      alert('Gagal update status pembayaran!');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   if (loading) return <div className="p-10 text-center font-bold">Memuat Data Bisnis...</div>;
 
   return (
@@ -68,7 +90,8 @@ const AdminDashboard: React.FC = () => {
               <th className="px-8 py-4">ID</th>
               <th className="px-8 py-4">Tanggal</th>
               <th className="px-8 py-4">Total</th>
-              <th className="px-8 py-4">Metode</th>
+              <th className="px-8 py-4">Status</th>
+              <th className="px-8 py-4">Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -77,12 +100,25 @@ const AdminDashboard: React.FC = () => {
                 <td className="px-8 py-4">{t.queueNumber || t._id}</td>
                 <td className="px-8 py-4">{new Date(t.createdAt).toLocaleString()}</td>
                 <td className="px-8 py-4 font-bold text-green-600">Rp {t.totalAmount?.toLocaleString()}</td>
-                <td className="px-8 py-4">{t.paymentMethod || '-'}</td>
+                <td className="px-8 py-4">
+                  <span className={`px-3 py-1 rounded-lg text-xs font-bold ${t.paid ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                    {t.paid ? 'Sudah Dibayar' : 'Belum Dibayar'}
+                  </span>
+                </td>
+                <td className="px-8 py-4">
+                  <button
+                    className={`px-4 py-2 rounded-xl font-bold ${t.paid ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}
+                    disabled={updatingId === t._id}
+                    onClick={() => handleTogglePaid(t._id, t.paid)}
+                  >
+                    {updatingId === t._id ? 'Menyimpan...' : t.paid ? 'Tandai Belum' : 'Tandai Sudah'}
+                  </button>
+                </td>
               </tr>
             ))}
             {transactions.length === 0 && (
               <tr>
-                <td colSpan={4} className="text-center py-8 text-gray-400">Belum ada transaksi.</td>
+                <td colSpan={5} className="text-center py-8 text-gray-400">Belum ada transaksi.</td>
               </tr>
             )}
           </tbody>
