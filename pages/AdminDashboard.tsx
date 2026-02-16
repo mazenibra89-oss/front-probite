@@ -30,7 +30,8 @@ const AdminDashboard: React.FC = () => {
   }, []);
 
   const today = new Date().toLocaleDateString();
-  const todayTransactions = transactions.filter(t => new Date(t.createdAt).toLocaleDateString() === today);
+  // Hanya transaksi hari ini yang sudah dibayar
+  const todayTransactions = transactions.filter(t => new Date(t.createdAt).toLocaleDateString() === today && t.paid);
   const totalOmzet = todayTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
   const totalTransactionsCount = todayTransactions.length;
 
