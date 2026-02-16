@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useProbiteStore } from '../store';
 import { Plus, Edit2, Trash2, Search, X } from 'lucide-react';
 import { CATEGORIES } from '../constants';
 
@@ -7,11 +6,11 @@ import { CATEGORIES } from '../constants';
 const API_URL = 'https://api-probite.exium.my.id';
 
 const AdminProducts: React.FC = () => {
-  const { products, setProducts } = useProbiteStore();
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState('');
   const [editId, setEditId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [products, setProducts] = useState([]); // State produk dari backend
 
   const [formData, setFormData] = useState({
     name: '',
@@ -32,7 +31,7 @@ const AdminProducts: React.FC = () => {
     try {
       const res = await fetch(`${API_URL}/api/products`);
       const data = await res.json();
-      setProducts(data); // Simpan ke Zustand store
+      setProducts(Array.isArray(data) ? data : []); // Simpan produk dari backend
     } catch (err) {
       console.error("Gagal ambil produk:", err);
     }
