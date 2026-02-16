@@ -6,7 +6,7 @@ import { CartItem, Transaction } from '../types';
 import { Link } from 'react-router-dom';
 
 // Pastikan URL API sudah benar
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = 'https://api-probite.exium.my.id';
 
 const CustomerHome: React.FC = () => {
   const { products, setProducts } = useProbiteStore(); // Ambil setProducts untuk update store
