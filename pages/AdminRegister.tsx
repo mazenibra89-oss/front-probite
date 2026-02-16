@@ -23,7 +23,7 @@ const AdminRegister: React.FC = () => {
 
     try {
       // Menggunakan 127.0.0.1 agar lebih stabil dibanding localhost
-      const response = await fetch('http://127.0.0.1:5000/api/auth/register', {
+      const response = await fetch('https://api-probite.exium.my.id/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
