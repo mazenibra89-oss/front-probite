@@ -26,7 +26,11 @@ const CustomerHome: React.FC = () => {
       try {
         const res = await fetch(`${API_URL}/api/products`);
         const data = await res.json();
-        setProducts(data); // Simpan data dari MongoDB ke Zustand Store
+        // Filter hanya produk kategori Makanan & Minuman
+        const filtered = Array.isArray(data)
+          ? data.filter(p => p.category === 'Makanan' || p.category === 'Minuman')
+          : [];
+        setProducts(filtered);
       } catch (err) {
         console.error("Gagal mengambil menu dari server:", err);
       }
