@@ -18,9 +18,10 @@ const AdminProducts: React.FC = () => {
     hpp: 0,
     price: 0,
     stock: 0,
-    image: 'https://picsum.photos/400/400',
+    image: '', // Akan diisi url setelah upload
     description: ''
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   // Load data dari Database saat halaman dibuka
   useEffect(() => {
@@ -37,10 +38,36 @@ const AdminProducts: React.FC = () => {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     const authData = JSON.parse(localStorage.getItem('probite_auth') || '{}');
+
+    let imageUrl = formData.image;
+    if (imageFile) {
+      const imgForm = new FormData();
+      imgForm.append('file', imageFile);
+      // Ganti URL berikut dengan endpoint upload gambar backend Anda
+      const uploadRes = await fetch(`${API_URL}/api/upload`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${authData.token}` },
+        body: imgForm
+      });
+      if (uploadRes.ok) {
+        const uploadData = await uploadRes.json();
+        imageUrl = uploadData.url; // Pastikan backend mengembalikan { url: '...' }
+      } else {
+        alert('Gagal upload gambar!');
+        setIsLoading(false);
+        return;
+      }
+    }
 
     const method = editId ? 'PUT' : 'POST';
     const url = editId ? `${API_URL}/api/products/${editId}` : `${API_URL}/api/products/add`;
@@ -52,12 +79,13 @@ const AdminProducts: React.FC = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authData.token}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, image: imageUrl })
       });
 
       if (response.ok) {
         await fetchProducts(); // Refresh list dari DB
         setShowModal(false);
+        setImageFile(null);
       }
     } catch (err) {
       alert("Gagal menyimpan ke server!");
@@ -183,6 +211,10 @@ const AdminProducts: React.FC = () => {
 
                 <label className="block font-bold mb-1">Deskripsi</label>
                 <textarea className="w-full p-3 rounded-xl bg-gray-50" placeholder="Deskripsi" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
+
+                <label className="block font-bold mb-1">Gambar Produk</label>
+                <input type="file" accept="image/*" className="w-full p-3 rounded-xl bg-gray-50" onChange={handleImageChange} />
+                {imageFile && <img src={URL.createObjectURL(imageFile)} alt="Preview" className="w-32 h-32 object-cover rounded-xl mt-2" />}
 
                 <div className="flex gap-2">
                   <button type="button" onClick={() => setShowModal(false)} className="flex-1 p-4 bg-gray-100 rounded-2xl font-bold">Batal</button>
