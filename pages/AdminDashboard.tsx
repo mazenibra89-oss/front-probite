@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useProbiteStore } from '../store';
-import { TrendingUp, ShoppingBag, Wallet, Users, ArrowUpRight } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { TrendingUp, ShoppingBag, Wallet, Users } from 'lucide-react';
 
 const API_URL = 'https://api-probite.exium.my.id';
 
 const AdminDashboard: React.FC = () => {
-  const { transactions, setTransactions, products } = useProbiteStore();
+  const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,9 +12,15 @@ const AdminDashboard: React.FC = () => {
       try {
         const res = await fetch(`${API_URL}/api/sales/history`);
         const data = await res.json();
-        setTransactions(data);
+        if (Array.isArray(data)) {
+          setTransactions(data);
+        } else if (Array.isArray(data.history)) {
+          setTransactions(data.history);
+        } else {
+          setTransactions([]);
+        }
       } catch (err) {
-        console.error("Gagal ambil history transaksi");
+        setTransactions([]);
       } finally {
         setLoading(false);
       }
@@ -26,14 +30,13 @@ const AdminDashboard: React.FC = () => {
 
   const today = new Date().toLocaleDateString();
   const todayTransactions = transactions.filter(t => new Date(t.createdAt).toLocaleDateString() === today);
-  
-  const totalOmzet = todayTransactions.reduce((sum, t) => sum + t.totalAmount, 0);
+  const totalOmzet = todayTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
   const totalTransactionsCount = todayTransactions.length;
 
   const stats = [
     { label: 'Omzet Hari Ini', value: `Rp ${totalOmzet.toLocaleString()}`, icon: <Wallet className="text-blue-500" />, color: 'bg-blue-50' },
     { label: 'Total Transaksi', value: totalTransactionsCount.toString(), icon: <ShoppingBag className="text-[#C0392B]" />, color: 'bg-red-50' },
-    { label: 'Stok Kritis', value: products.filter(p => p.stock < 10).length.toString(), icon: <Users className="text-orange-500" />, color: 'bg-orange-50' },
+    { label: 'Stok Kritis', value: '0', icon: <Users className="text-orange-500" />, color: 'bg-orange-50' },
   ];
 
   if (loading) return <div className="p-10 text-center font-bold">Memuat Data Bisnis...</div>;
@@ -58,11 +61,12 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
-        <h3 className="text-xl font-bold mb-6">Aktivitas Penjualan Terakhir</h3>
+        <h3 className="text-xl font-bold mb-6">Transaksi Terbaru</h3>
         <table className="w-full text-left">
           <thead className="bg-gray-50 text-gray-400 text-xs uppercase font-bold">
             <tr>
-              <th className="px-8 py-4">Waktu</th>
+              <th className="px-8 py-4">ID</th>
+              <th className="px-8 py-4">Tanggal</th>
               <th className="px-8 py-4">Total</th>
               <th className="px-8 py-4">Metode</th>
             </tr>
@@ -70,11 +74,17 @@ const AdminDashboard: React.FC = () => {
           <tbody>
             {transactions.slice(0, 5).map((t: any) => (
               <tr key={t._id} className="border-b">
+                <td className="px-8 py-4">{t.queueNumber || t._id}</td>
                 <td className="px-8 py-4">{new Date(t.createdAt).toLocaleString()}</td>
-                <td className="px-8 py-4 font-bold text-green-600">Rp {t.totalAmount.toLocaleString()}</td>
-                <td className="px-8 py-4">{t.paymentMethod}</td>
+                <td className="px-8 py-4 font-bold text-green-600">Rp {t.totalAmount?.toLocaleString()}</td>
+                <td className="px-8 py-4">{t.paymentMethod || '-'}</td>
               </tr>
             ))}
+            {transactions.length === 0 && (
+              <tr>
+                <td colSpan={4} className="text-center py-8 text-gray-400">Belum ada transaksi.</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
