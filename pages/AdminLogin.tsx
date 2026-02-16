@@ -19,35 +19,25 @@ const AdminLogin: React.FC = () => {
         body: JSON.stringify({ username, password })
       });
 
-      console.log('Response status:', response.status);
-      let data;
-      try {
-        data = await response.json();
-        console.log('Response data:', data);
-      } catch (jsonErr) {
-        console.error('Failed to parse JSON:', jsonErr);
-        setError('Format response dari server tidak valid!');
-        return;
-      }
+      const data = await response.json();
 
       if (response.ok) {
-        if (data.user && data.user.username && data.token) {
-          localStorage.setItem('probite_auth', JSON.stringify({ 
-            username: data.user.username, 
-            token: data.token, 
-            role: 'Owner' 
-          }));
-          navigate('/admin');
-        } else {
-          setError('Data login tidak lengkap dari server!');
-          console.error('Expected user/token missing in response:', data);
-        }
+        localStorage.setItem('probite_auth', JSON.stringify({ 
+          username: data.user.username, 
+          token: data.token, 
+          role: 'Owner' 
+        }));
+        // Force redirect to admin page
+        navigate('/admin', { replace: true });
+        // As backup, reload page after redirect
+        setTimeout(() => {
+          window.location.href = '/admin';
+        }, 500);
       } else {
         setError(data.message || 'Username atau Password salah!');
       }
     } catch (err) {
       setError('Gagal terhubung ke server. Pastikan Backend sudah dijalankan!');
-      console.error('Network/server error:', err);
     }
   };
 
