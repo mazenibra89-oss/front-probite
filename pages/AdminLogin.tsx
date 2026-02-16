@@ -30,9 +30,9 @@ const AdminLogin: React.FC = () => {
         // Force redirect to admin page
         navigate('/admin', { replace: true });
         // As backup, reload page after redirect
-        setTimeout(() => {
-          window.location.href = '/#/admin';
-        }, 500);
+        // setTimeout(() => {
+        //   window.location.href = '/#/admin';
+        // }, 500);
       } else {
         setError(data.message || 'Username atau Password salah!');
       }
