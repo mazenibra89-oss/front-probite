@@ -83,9 +83,9 @@ const AdminDashboard: React.FC = () => {
         ))}
       </div>
 
-      <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+      <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-4 md:p-8 overflow-x-auto">
         <h3 className="text-xl font-bold mb-6">Transaksi Terbaru</h3>
-        <table className="w-full text-left">
+        <table className="w-full min-w-[700px] text-left">
           <thead className="bg-gray-50 text-gray-400 text-xs uppercase font-bold">
             <tr>
               <th className="px-8 py-4">ID</th>
