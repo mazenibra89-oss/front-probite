@@ -226,6 +226,75 @@ const CustomerHome: React.FC = () => {
         </div>
       )}
 
+      {/* Mobile Cart Bar (Bottom) */}
+      {cart.length > 0 && (
+        <>
+          {/* Floating bar at bottom for mobile */}
+          <button
+            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 md:hidden w-[90vw] max-w-md bg-[#C0392B] text-white flex items-center justify-between px-6 py-4 rounded-2xl shadow-lg font-bold text-lg"
+            onClick={() => setShowCartMobile(true)}
+          >
+            <span className="flex items-center gap-2">
+              <ShoppingCart className="w-6 h-6" />
+              Keranjang
+              <span className="ml-2 bg-white text-[#C0392B] rounded-full px-3 py-1 text-sm font-bold">{cart.reduce((a, b) => a + b.quantity, 0)}</span>
+            </span>
+            <span>Rp {total.toLocaleString()}</span>
+          </button>
+
+          {/* Mobile Cart Drawer/Modal */}
+          {showCartMobile && (
+            <div className="fixed inset-0 z-50 flex items-end md:hidden">
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowCartMobile(false)} />
+              <div className="relative w-full bg-white rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto shadow-2xl animate-slideUp">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold flex items-center gap-2"><ShoppingCart className="text-[#C0392B]"/> Pesanan</h2>
+                  <button onClick={() => setShowCartMobile(false)}><X className="w-6 h-6 text-gray-400"/></button>
+                </div>
+                <div className="space-y-4">
+                  {cart.map(item => (
+                    <div key={item._id} className="flex gap-3 items-center">
+                      <img src={item.image} className="w-12 h-12 rounded-lg object-cover" />
+                      <div className="flex-1">
+                        <p className="font-bold text-sm leading-none">{item.name}</p>
+                        <p className="text-[#C0392B] font-bold text-xs">Rp {(item.price * item.quantity).toLocaleString()}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => updateQuantity(item._id, -1)} className="bg-gray-100 p-1 rounded"><Minus className="w-3 h-3"/></button>
+                        <span className="text-sm font-bold">{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item._id, 1)} className="bg-gray-100 p-1 rounded"><Plus className="w-3 h-3"/></button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-6 border-t pt-4">
+                  <select 
+                    className="w-full p-3 bg-gray-50 rounded-xl mb-4 font-bold outline-none"
+                    value={selectedCity}
+                    onChange={e => setSelectedCity(e.target.value)}
+                  >
+                    <option value="">-- Pilih Kota --</option>
+                    <option value="Semarang">Semarang</option>
+                    <option value="Jogja">Jogja</option>
+                  </select>
+                  <div className="flex justify-between text-xl font-bold text-[#C0392B] mb-4">
+                    <span>Total</span>
+                    <span>Rp {total.toLocaleString()}</span>
+                  </div>
+                  <button 
+                    onClick={() => { setShowCartMobile(false); handleCheckout(); }}
+                    disabled={!(selectedCity === 'Semarang' || selectedCity === 'Jogja') || isLoading}
+                    className="w-full bg-[#C0392B] text-white py-4 rounded-2xl font-bold shadow-lg shadow-red-200 disabled:bg-gray-300"
+                  >
+                    {isLoading ? 'Memproses...' : 'Checkout'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
       {/* Order Payment Modal (Muncul setelah checkout sukses ke DB) */}
       {showPaymentModal && pendingOrder && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
