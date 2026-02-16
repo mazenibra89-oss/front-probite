@@ -128,18 +128,34 @@ const CustomerHome: React.FC = () => {
           <Link to="/login" className="text-gray-400 hover:text-[#C0392B]"><Settings className="w-5 h-5"/></Link>
         </header>
 
-        {/* Categories Bar */}
-        <div className="flex gap-3 overflow-x-auto pb-4 mb-6">
-          {CATEGORIES.filter(c => c !== 'Semua' && c !== 'Cemilan').map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-6 py-2 rounded-full font-bold transition-all border ${activeCategory === cat ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-600 border-gray-100'}`}
-            >
-              {cat}
-            </button>
-          ))}
+        {/* Categories Bar - Mobile Friendly */}
+        <div className="w-full sticky top-0 z-20 bg-[#F5E6D3] py-4">
+          <div className="flex gap-2 overflow-x-auto px-4 pb-2 no-scrollbar scroll-smooth">
+            {CATEGORIES.filter(c => c !== 'Semua' && c !== 'Cemilan').map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`flex-shrink-0 px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 border
+                  ${activeCategory === cat 
+                    ? 'bg-[#C0392B] text-white border-[#C0392B] shadow-md scale-105' 
+                    : 'bg-white text-gray-600 border-gray-200 active:scale-95'}`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* Hide ugly scrollbar for horizontal category bar */}
+        <style>{`
+          .no-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+          .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
 
         {/* Products Grid */}
         <div className="flex-1 overflow-y-auto pr-2 pb-32 md:pb-0">{/* Tambah pb-32 untuk mobile jika cart muncul */}
