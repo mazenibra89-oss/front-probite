@@ -27,12 +27,8 @@ const AdminLogin: React.FC = () => {
           token: data.token, 
           role: 'Owner' 
         }));
-        // Force redirect to admin page
         navigate('/admin', { replace: true });
-        // As backup, reload page after redirect
-        // setTimeout(() => {
-        //   window.location.href = '/#/admin';
-        // }, 500);
+        window.location.reload(); // Force App re-render supaya isAuthenticated() terbaca
       } else {
         setError(data.message || 'Username atau Password salah!');
       }
