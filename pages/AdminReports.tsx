@@ -31,9 +31,9 @@ const AdminReports: React.FC = () => {
     fetchHistory();
   }, []);
 
-  // Filter data
+  // Filter data: hanya transaksi yang sudah dibayar
   const today = new Date();
-  let filteredData = (transactions || []).filter(t => t.createdAt);
+  let filteredData = (transactions || []).filter(t => t.createdAt && t.paid);
 
   let label = '';
   if (range === 'date') {
