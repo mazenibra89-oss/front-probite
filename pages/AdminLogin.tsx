@@ -19,20 +19,35 @@ const AdminLogin: React.FC = () => {
         body: JSON.stringify({ username, password })
       });
 
-      const data = await response.json();
+      console.log('Response status:', response.status);
+      let data;
+      try {
+        data = await response.json();
+        console.log('Response data:', data);
+      } catch (jsonErr) {
+        console.error('Failed to parse JSON:', jsonErr);
+        setError('Format response dari server tidak valid!');
+        return;
+      }
 
       if (response.ok) {
-        localStorage.setItem('probite_auth', JSON.stringify({ 
-          username: data.user.username, 
-          token: data.token, 
-          role: 'Owner' 
-        }));
-        navigate('/admin');
+        if (data.user && data.user.username && data.token) {
+          localStorage.setItem('probite_auth', JSON.stringify({ 
+            username: data.user.username, 
+            token: data.token, 
+            role: 'Owner' 
+          }));
+          navigate('/admin');
+        } else {
+          setError('Data login tidak lengkap dari server!');
+          console.error('Expected user/token missing in response:', data);
+        }
       } else {
         setError(data.message || 'Username atau Password salah!');
       }
     } catch (err) {
       setError('Gagal terhubung ke server. Pastikan Backend sudah dijalankan!');
+      console.error('Network/server error:', err);
     }
   };
 
