@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Plus, Minus, Trash2, Settings, X } from 'lucide-react';
-import { useProbiteStore } from '../store';
 import { CATEGORIES } from '../constants';
 import { CartItem, Transaction } from '../types';
 import { Link } from 'react-router-dom';
@@ -9,7 +8,6 @@ import { Link } from 'react-router-dom';
 const API_URL = 'https://api-probite.exium.my.id';
 
 const CustomerHome: React.FC = () => {
-  const { products, setProducts } = useProbiteStore(); // Ambil setProducts untuk update store
   const [cart, setCart] = useState<CartItem[]>([]);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('Makanan');
@@ -19,6 +17,7 @@ const CustomerHome: React.FC = () => {
   const [openDesc, setOpenDesc] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const [products, setProducts] = useState([]); // Ambil produk langsung dari backend
 
   // --- SINKRONISASI DATA PRODUK DARI DATABASE ---
   useEffect(() => {
@@ -26,13 +25,13 @@ const CustomerHome: React.FC = () => {
       try {
         const res = await fetch(`${API_URL}/api/products`);
         const data = await res.json();
-        setProducts(Array.isArray(data) ? data : []); // Ambil semua produk dari backend
+        setProducts(Array.isArray(data) ? data : []); // Simpan produk dari backend
       } catch (err) {
         console.error("Gagal mengambil menu dari server:", err);
       }
     };
     fetchProducts();
-  }, [setProducts]);
+  }, []);
 
   const filteredProducts = products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
