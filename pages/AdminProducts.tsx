@@ -158,11 +158,16 @@ const AdminProducts: React.FC = () => {
              <h3 className="text-2xl font-bold mb-6">{editId ? 'Edit Produk' : 'Tambah Produk'}</h3>
              <form onSubmit={handleSubmit} className="space-y-4">
                 <input className="w-full p-3 rounded-xl bg-gray-50" placeholder="Nama Produk" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
+                <select className="w-full p-3 rounded-xl bg-gray-50" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} required>
+                  {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                </select>
                 <div className="grid grid-cols-2 gap-4">
                   <input type="number" className="p-3 rounded-xl bg-gray-50" placeholder="HPP" value={formData.hpp} onChange={e => setFormData({...formData, hpp: +e.target.value})} />
                   <input type="number" className="p-3 rounded-xl bg-gray-50" placeholder="Harga Jual" value={formData.price} onChange={e => setFormData({...formData, price: +e.target.value})} />
                 </div>
                 <input type="number" className="w-full p-3 rounded-xl bg-gray-50" placeholder="Stok" value={formData.stock} onChange={e => setFormData({...formData, stock: +e.target.value})} />
+                <input className="w-full p-3 rounded-xl bg-gray-50" placeholder="URL Gambar" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} />
+                <textarea className="w-full p-3 rounded-xl bg-gray-50" placeholder="Deskripsi" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
                 <div className="flex gap-2">
                   <button type="button" onClick={() => setShowModal(false)} className="flex-1 p-4 bg-gray-100 rounded-2xl font-bold">Batal</button>
                   <button type="submit" className="flex-1 p-4 bg-[#C0392B] text-white rounded-2xl font-bold">{isLoading ? 'Menyimpan...' : 'Simpan'}</button>
