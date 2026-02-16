@@ -90,6 +90,7 @@ const AdminDashboard: React.FC = () => {
               <th className="px-8 py-4">ID</th>
               <th className="px-8 py-4">Tanggal</th>
               <th className="px-8 py-4">Total</th>
+              <th className="px-8 py-4">Kota</th>
               <th className="px-8 py-4">Status</th>
               <th className="px-8 py-4">Aksi</th>
             </tr>
@@ -100,6 +101,7 @@ const AdminDashboard: React.FC = () => {
                 <td className="px-8 py-4">{t.queueNumber || t._id}</td>
                 <td className="px-8 py-4">{new Date(t.createdAt).toLocaleString()}</td>
                 <td className="px-8 py-4 font-bold text-green-600">Rp {t.totalAmount?.toLocaleString()}</td>
+                <td className="px-8 py-4">{t.city || '-'}</td>
                 <td className="px-8 py-4">
                   <span className={`px-3 py-1 rounded-lg text-xs font-bold ${t.paid ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
                     {t.paid ? 'Sudah Dibayar' : 'Belum Dibayar'}
@@ -118,7 +120,7 @@ const AdminDashboard: React.FC = () => {
             ))}
             {transactions.length === 0 && (
               <tr>
-                <td colSpan={5} className="text-center py-8 text-gray-400">Belum ada transaksi.</td>
+                <td colSpan={6} className="text-center py-8 text-gray-400">Belum ada transaksi.</td>
               </tr>
             )}
           </tbody>
