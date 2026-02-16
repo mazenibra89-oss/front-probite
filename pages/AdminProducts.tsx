@@ -4,7 +4,7 @@ import { Plus, Edit2, Trash2, Search, X } from 'lucide-react';
 import { CATEGORIES } from '../constants';
 
 // Alamat API VPS Anda (Pastikan sudah diset di Vercel Env)
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = 'https://api-probite.exium.my.id';
 
 const AdminProducts: React.FC = () => {
   const { products, setProducts } = useProbiteStore();

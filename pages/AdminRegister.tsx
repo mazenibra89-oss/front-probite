@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, User, ArrowLeft, AlertCircle } from 'lucide-react';
 
+const API_URL = 'https://api-probite.exium.my.id';
+
 const AdminRegister: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +25,7 @@ const AdminRegister: React.FC = () => {
 
     try {
       // Menggunakan 127.0.0.1 agar lebih stabil dibanding localhost
-      const response = await fetch('https://api-probite.exium.my.id/api/auth/register', {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })

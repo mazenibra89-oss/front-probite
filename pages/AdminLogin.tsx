@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, User, AlertCircle, ArrowLeft } from 'lucide-react';
 
+const API_URL = 'https://api-probite.exium.my.id';
+
 const AdminLogin: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -13,7 +15,7 @@ const AdminLogin: React.FC = () => {
     setError('');
 
     try {
-      const response = await fetch('https://api-probite.exium.my.id/api/auth/login', {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })

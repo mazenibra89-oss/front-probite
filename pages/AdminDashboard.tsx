@@ -3,7 +3,7 @@ import { useProbiteStore } from '../store';
 import { TrendingUp, ShoppingBag, Wallet, Users, ArrowUpRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = 'https://api-probite.exium.my.id';
 
 const AdminDashboard: React.FC = () => {
   const { transactions, setTransactions, products } = useProbiteStore();
