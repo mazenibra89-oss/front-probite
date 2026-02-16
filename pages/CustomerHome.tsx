@@ -110,7 +110,7 @@ const CustomerHome: React.FC = () => {
       
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col p-4 md:p-8 overflow-hidden">
-        <header className="mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <header className="mb-8 flex flex-col md:flex-row items-center justify-between gap-4 relative">
           <div>
             <h1 className="text-3xl font-bold text-[#C0392B]">PROBITE</h1>
             <p className="text-gray-600 text-sm">Menu Fresh dari Database Cloud.</p>
@@ -125,7 +125,10 @@ const CustomerHome: React.FC = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <Link to="/login" className="text-gray-400 hover:text-[#C0392B]"><Settings className="w-5 h-5"/></Link>
+          {/* Desktop settings icon */}
+          <Link to="/login" className="text-gray-400 hover:text-[#C0392B] hidden md:block"><Settings className="w-5 h-5"/></Link>
+          {/* Mobile settings icon absolute top right */}
+          <Link to="/login" className="text-gray-400 hover:text-[#C0392B] md:hidden absolute right-0 top-0 p-2"><Settings className="w-6 h-6"/></Link>
         </header>
 
         {/* Categories Bar - Mobile Friendly */}
