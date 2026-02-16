@@ -38,9 +38,27 @@ const AdminProducts: React.FC = () => {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImageFile(e.target.files[0]);
+  // Handler upload gambar langsung ke backend dan update formData.image
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formDataUpload = new FormData();
+    formDataUpload.append('file', file); // Harus sama dengan upload.single('file') di backend
+
+    try {
+      const res = await fetch(`${API_URL}/api/upload`, {
+        method: 'POST',
+        body: formDataUpload, // Jangan set Header Content-Type, biarkan browser yang mengaturnya
+      });
+      const data = await res.json();
+      if (data.url) {
+        setFormData(prev => ({ ...prev, image: data.url })); // Simpan URL dari backend ke state
+        setImageFile(file);
+        alert("Gambar berhasil diupload!");
+      }
+    } catch (err) {
+      alert("Gagal upload gambar!");
     }
   };
 
@@ -48,26 +66,6 @@ const AdminProducts: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     const authData = JSON.parse(localStorage.getItem('probite_auth') || '{}');
-
-    let imageUrl = formData.image;
-    if (imageFile) {
-      const imgForm = new FormData();
-      imgForm.append('file', imageFile);
-      // Ganti URL berikut dengan endpoint upload gambar backend Anda
-      const uploadRes = await fetch(`${API_URL}/api/upload`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${authData.token}` },
-        body: imgForm
-      });
-      if (uploadRes.ok) {
-        const uploadData = await uploadRes.json();
-        imageUrl = uploadData.url; // Pastikan backend mengembalikan { url: '...' }
-      } else {
-        alert('Gagal upload gambar!');
-        setIsLoading(false);
-        return;
-      }
-    }
 
     const method = editId ? 'PUT' : 'POST';
     const url = editId ? `${API_URL}/api/products/${editId}` : `${API_URL}/api/products/add`;
@@ -79,7 +77,7 @@ const AdminProducts: React.FC = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authData.token}`
         },
-        body: JSON.stringify({ ...formData, image: imageUrl })
+        body: JSON.stringify({ ...formData })
       });
 
       if (response.ok) {
@@ -213,7 +211,7 @@ const AdminProducts: React.FC = () => {
                 <textarea className="w-full p-3 rounded-xl bg-gray-50" placeholder="Deskripsi" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
 
                 <label className="block font-bold mb-1">Gambar Produk</label>
-                <input type="file" accept="image/*" className="w-full p-3 rounded-xl bg-gray-50" onChange={handleImageChange} />
+                <input type="file" accept="image/*" className="w-full p-3 rounded-xl bg-gray-50" onChange={handleFileUpload} />
                 {imageFile && <img src={URL.createObjectURL(imageFile)} alt="Preview" className="w-32 h-32 object-cover rounded-xl mt-2" />}
 
                 <div className="flex gap-2">
