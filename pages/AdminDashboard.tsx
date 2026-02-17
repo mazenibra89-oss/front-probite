@@ -17,6 +17,7 @@ const AdminDashboard: React.FC = () => {
     date: new Date().toISOString().slice(0, 10)
   });
   const [expenseLoading, setExpenseLoading] = useState(false);
+  const [selectedCity, setSelectedCity] = useState<'ALL' | 'Semarang' | 'Jogja'>('ALL');
 
   useEffect(() => {
     const fetchSales = async () => {
@@ -63,6 +64,16 @@ const AdminDashboard: React.FC = () => {
   const omzetJogja = monthlyJogja.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
   const countSemarang = monthlySemarang.length;
   const countJogja = monthlyJogja.length;
+
+  // Filter transaksi sesuai kota yang dipilih
+  const filteredTransactions = transactions.filter(t => {
+    const d = new Date(t.createdAt);
+    const isMonth = d.getMonth() === currentMonth && d.getFullYear() === currentYear && t.paid;
+    if (selectedCity === 'ALL') return isMonth;
+    return isMonth && t.city === selectedCity;
+  });
+  const totalOmzet = filteredTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+  const totalCount = filteredTransactions.length;
 
   const stats = [
     { label: 'Omzet Bulan Ini', value: `Rp ${totalMonthlyOmzet.toLocaleString()}`, icon: <Wallet className="text-blue-500" />, color: 'bg-blue-50' },
@@ -187,20 +198,20 @@ const AdminDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Rekap per cabang */}
+      {/* Tombol filter kota */}
+      <div className="flex gap-2 mb-4">
+        <button onClick={() => setSelectedCity('ALL')} className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${selectedCity === 'ALL' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}>Semua</button>
+        <button onClick={() => setSelectedCity('Semarang')} className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${selectedCity === 'Semarang' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}>Semarang</button>
+        <button onClick={() => setSelectedCity('Jogja')} className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${selectedCity === 'Jogja' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}>Jogja</button>
+      </div>
+
+      {/* Rekap sesuai filter kota */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-          <h2 className="text-xl font-bold mb-2 text-[#C0392B]">Semarang</h2>
+          <h2 className="text-xl font-bold mb-2 text-[#C0392B]">{selectedCity === 'ALL' ? 'Semua Kota' : selectedCity}</h2>
           <div className="flex flex-col gap-2">
-            <div className="flex justify-between"><span>Omzet Bulan Ini</span><span className="font-bold">Rp {omzetSemarang.toLocaleString()}</span></div>
-            <div className="flex justify-between"><span>Total Transaksi</span><span className="font-bold">{countSemarang}</span></div>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-          <h2 className="text-xl font-bold mb-2 text-[#2980B9]">Jogja</h2>
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between"><span>Omzet Bulan Ini</span><span className="font-bold">Rp {omzetJogja.toLocaleString()}</span></div>
-            <div className="flex justify-between"><span>Total Transaksi</span><span className="font-bold">{countJogja}</span></div>
+            <div className="flex justify-between"><span>Omzet Bulan Ini</span><span className="font-bold">Rp {totalOmzet.toLocaleString()}</span></div>
+            <div className="flex justify-between"><span>Total Transaksi</span><span className="font-bold">{totalCount}</span></div>
           </div>
         </div>
       </div>
