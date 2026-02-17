@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Printer, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const API_URL = 'https://api-probite.exium.my.id';
 
@@ -8,6 +9,8 @@ const AdminReports: React.FC = () => {
   const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
   const [range, setRange] = useState<'date' | '7days' | '30days'>('date');
   const [cityFilter, setCityFilter] = useState<'Semarang' | 'Jogja' | 'ALL'>('ALL');
+  const [reportType, setReportType] = useState<'pemasukan' | 'pengeluaran'>('pemasukan');
+  const navigate = useNavigate();
 
   // Ambil data dari backend
   useEffect(() => {
@@ -91,6 +94,18 @@ const AdminReports: React.FC = () => {
 
       {/* Control Bar */}
       <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex flex-wrap gap-4 items-center">
+         {/* Report Type Switcher */}
+         <div className="flex gap-2">
+           <button
+             onClick={() => { setReportType('pemasukan'); navigate('/admin/reports'); }}
+             className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${reportType === 'pemasukan' ? 'bg-[#27AE60] text-white border-[#27AE60]' : 'bg-white text-gray-500 border-gray-200'}`}
+           >Pemasukan</button>
+           <button
+             onClick={() => { setReportType('pengeluaran'); navigate('/admin/expenses'); }}
+             className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${reportType === 'pengeluaran' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}
+           >Pengeluaran</button>
+         </div>
+         {/* Date Range Filter */}
          <input
             type="date"
             className="font-bold border rounded-xl px-4 py-2 outline-none"
