@@ -9,8 +9,9 @@ const AdminReports: React.FC = () => {
   const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
   const [range, setRange] = useState<'date' | '7days' | '30days'>('date');
   const [cityFilter, setCityFilter] = useState<'Semarang' | 'Jogja' | 'ALL'>('ALL');
-  const [reportType, setReportType] = useState<'pemasukan' | 'pengeluaran'>('pemasukan');
   const navigate = useNavigate();
+  const [reportType, setReportType] = useState<'pemasukan' | 'pengeluaran'>('pemasukan');
+  const [expenses, setExpenses] = useState<any[]>([]);
 
   // Ambil data dari backend
   useEffect(() => {
@@ -35,31 +36,52 @@ const AdminReports: React.FC = () => {
     fetchHistory();
   }, []);
 
+  // Fetch pengeluaran jika reportType pengeluaran
+  useEffect(() => {
+    if (reportType === 'pengeluaran') {
+      const fetchExpenses = async () => {
+        try {
+          const response = await fetch(`${API_URL}/api/expenses`);
+          const data = await response.json();
+          setExpenses(Array.isArray(data) ? data : []);
+        } catch (err) {
+          setExpenses([]);
+        }
+      };
+      fetchExpenses();
+    }
+  }, [reportType]);
+
   // Filter data: hanya transaksi yang sudah dibayar
   const today = new Date();
   let filteredData = (transactions || []).filter(t => t.createdAt && t.paid);
   if (cityFilter !== 'ALL') {
     filteredData = filteredData.filter(t => t.city === cityFilter);
   }
+  let filteredExpenses = (expenses || []).filter(e => e.createdAt);
   let label = '';
   if (range === 'date') {
     filteredData = filteredData.filter(t => t.createdAt.startsWith(filterDate));
+    filteredExpenses = filteredExpenses.filter(e => e.createdAt.startsWith(filterDate));
     label = filterDate;
   } else if (range === '7days') {
     const start = new Date(today);
     start.setDate(today.getDate() - 6);
     filteredData = filteredData.filter(t => new Date(t.createdAt) >= start);
+    filteredExpenses = filteredExpenses.filter(e => new Date(e.createdAt) >= start);
     label = `7 Hari Terakhir`;
   } else if (range === '30days') {
     const start = new Date(today);
     start.setDate(today.getDate() - 29);
     filteredData = filteredData.filter(t => new Date(t.createdAt) >= start);
+    filteredExpenses = filteredExpenses.filter(e => new Date(e.createdAt) >= start);
     label = `30 Hari Terakhir`;
   }
 
   // Hitung total omzet & profit
   const totalOmzet = filteredData.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
   const totalProfit = filteredData.reduce((sum, t) => sum + (t.totalProfit || 0), 0);
+  const totalExpense = filteredExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
 
   // Daftar tanggal unik untuk filter
   const uniqueDates = Array.from(new Set(transactions.map(t => t.createdAt?.slice(0, 10)))).filter(Boolean).sort().reverse();
@@ -76,32 +98,16 @@ const AdminReports: React.FC = () => {
         </button>
       </header>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-            <p className="text-xs text-gray-400 font-bold uppercase">Filter Saat Ini</p>
-            <p className="text-lg font-bold">{label}</p>
-        </div>
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-            <p className="text-xs text-gray-400 font-bold uppercase">Total Omzet</p>
-            <p className="text-2xl font-bold text-black">Rp {totalOmzet.toLocaleString()}</p>
-        </div>
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-            <p className="text-xs text-gray-400 font-bold uppercase">Total Profit</p>
-            <p className="text-2xl font-bold text-green-600">Rp {totalProfit.toLocaleString()}</p>
-        </div>
-      </div>
-
       {/* Control Bar */}
       <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex flex-wrap gap-4 items-center">
          {/* Report Type Switcher */}
          <div className="flex gap-2">
            <button
-             onClick={() => { setReportType('pemasukan'); navigate('/admin/reports'); }}
+             onClick={() => setReportType('pemasukan')}
              className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${reportType === 'pemasukan' ? 'bg-[#27AE60] text-white border-[#27AE60]' : 'bg-white text-gray-500 border-gray-200'}`}
            >Pemasukan</button>
            <button
-             onClick={() => { setReportType('pengeluaran'); navigate('/admin/expenses'); }}
+             onClick={() => setReportType('pengeluaran')}
              className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${reportType === 'pengeluaran' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}
            >Pengeluaran</button>
          </div>
@@ -124,7 +130,8 @@ const AdminReports: React.FC = () => {
                 </button>
             ))}
          </div>
-         {/* City Filter Buttons */}
+         {/* City Filter Buttons (only for pemasukan) */}
+         {reportType === 'pemasukan' && (
          <div className="flex gap-2 ml-auto">
            <button
              onClick={() => setCityFilter('ALL')}
@@ -139,9 +146,40 @@ const AdminReports: React.FC = () => {
              className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${cityFilter === 'Jogja' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}
            >Jogja</button>
          </div>
+         )}
       </div>
 
+      {/* Stats Cards */}
+      {reportType === 'pemasukan' ? (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+            <p className="text-xs text-gray-400 font-bold uppercase">Filter Saat Ini</p>
+            <p className="text-lg font-bold">{label}</p>
+        </div>
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+            <p className="text-xs text-gray-400 font-bold uppercase">Total Omzet</p>
+            <p className="text-2xl font-bold text-black">Rp {totalOmzet.toLocaleString()}</p>
+        </div>
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+            <p className="text-xs text-gray-400 font-bold uppercase">Total Profit</p>
+            <p className="text-2xl font-bold text-green-600">Rp {totalProfit.toLocaleString()}</p>
+        </div>
+      </div>
+      ) : (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+            <p className="text-xs text-gray-400 font-bold uppercase">Filter Saat Ini</p>
+            <p className="text-lg font-bold">{label}</p>
+        </div>
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+            <p className="text-xs text-gray-400 font-bold uppercase">Total Pengeluaran</p>
+            <p className="text-2xl font-bold text-red-600">Rp {totalExpense.toLocaleString()}</p>
+        </div>
+      </div>
+      )}
+
       {/* Table */}
+      {reportType === 'pemasukan' ? (
       <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-gray-50 text-gray-400 text-xs uppercase">
@@ -178,6 +216,38 @@ const AdminReports: React.FC = () => {
           </tbody>
         </table>
       </div>
+      ) : (
+      <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+        <table className="w-full text-left">
+          <thead className="bg-gray-50 text-gray-400 text-xs uppercase">
+            <tr>
+              <th className="px-8 py-4">ID</th>
+              <th className="px-8 py-4">Keterangan</th>
+              <th className="px-8 py-4 text-right">Jumlah</th>
+              <th className="px-8 py-4 text-center">Tanggal</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {filteredExpenses.map(e => (
+              <tr key={e._id} className="hover:bg-gray-50 transition-colors">
+                <td className="px-8 py-5 font-bold">{e._id}</td>
+                <td className="px-8 py-5">{e.description}</td>
+                <td className="px-8 py-5 text-right font-bold text-red-600">Rp {e.amount?.toLocaleString()}</td>
+                <td className="px-8 py-5 text-center">{e.createdAt?.slice(0, 10)}</td>
+              </tr>
+            ))}
+            {filteredExpenses.length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-8 py-20 text-center">
+                  <Search className="w-12 h-12 mx-auto mb-4 opacity-10" />
+                  <p className="text-gray-400">Belum ada data pengeluaran.</p>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      )}
     </div>
   );
 };
