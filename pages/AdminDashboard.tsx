@@ -39,15 +39,20 @@ const AdminDashboard: React.FC = () => {
     fetchSales();
   }, []);
 
-  const today = new Date().toLocaleDateString();
-  // Hanya transaksi hari ini yang sudah dibayar
-  const todayTransactions = transactions.filter(t => new Date(t.createdAt).toLocaleDateString() === today && t.paid);
-  const totalOmzet = todayTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
-  const totalTransactionsCount = todayTransactions.length;
+  // Omzet dan transaksi bulan ini (bukan harian)
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  const monthlyTransactions = transactions.filter(t => {
+    const d = new Date(t.createdAt);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear && t.paid;
+  });
+  const totalMonthlyOmzet = monthlyTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+  const totalMonthlyTransactionsCount = monthlyTransactions.length;
 
   const stats = [
-    { label: 'Omzet Hari Ini', value: `Rp ${totalOmzet.toLocaleString()}`, icon: <Wallet className="text-blue-500" />, color: 'bg-blue-50' },
-    { label: 'Total Transaksi', value: totalTransactionsCount.toString(), icon: <ShoppingBag className="text-[#C0392B]" />, color: 'bg-red-50' },
+    { label: 'Omzet Bulan Ini', value: `Rp ${totalMonthlyOmzet.toLocaleString()}`, icon: <Wallet className="text-blue-500" />, color: 'bg-blue-50' },
+    { label: 'Total Transaksi Bulan Ini', value: totalMonthlyTransactionsCount.toString(), icon: <ShoppingBag className="text-[#C0392B]" />, color: 'bg-red-50' },
     { label: 'Stok Kritis', value: '0', icon: <Users className="text-orange-500" />, color: 'bg-orange-50' },
   ];
 
