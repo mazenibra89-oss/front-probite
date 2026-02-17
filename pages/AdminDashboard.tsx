@@ -205,33 +205,15 @@ const AdminDashboard: React.FC = () => {
         <button onClick={() => setSelectedCity('Jogja')} className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${selectedCity === 'Jogja' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}>Jogja</button>
       </div>
 
-      {/* Rekap sesuai filter kota */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-          <h2 className="text-xl font-bold mb-2 text-[#C0392B]">{selectedCity === 'ALL' ? 'Semua Kota' : selectedCity}</h2>
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between"><span>Omzet Bulan Ini</span><span className="font-bold">Rp {totalOmzet.toLocaleString()}</span></div>
-            <div className="flex justify-between"><span>Total Transaksi</span><span className="font-bold">{totalCount}</span></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Data rekap per kota */}
-      {/* Rekap semua kota di bawah tombol filter */}
+      {/* Dua kotak: Omzet & Total Transaksi sesuai filter kota */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-          <h2 className="text-xl font-bold mb-2 text-[#C0392B]">Semarang</h2>
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between"><span>Omzet Bulan Ini</span><span className="font-bold">Rp {omzetSemarang.toLocaleString()}</span></div>
-            <div className="flex justify-between"><span>Total Transaksi</span><span className="font-bold">{countSemarang}</span></div>
-          </div>
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col justify-center items-center">
+          <div className="text-gray-500 font-bold mb-1">Omzet Bulan Ini</div>
+          <div className="text-2xl font-bold text-[#C0392B]">Rp {totalOmzet.toLocaleString()}</div>
         </div>
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-          <h2 className="text-xl font-bold mb-2 text-[#2980B9]">Jogja</h2>
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between"><span>Omzet Bulan Ini</span><span className="font-bold">Rp {omzetJogja.toLocaleString()}</span></div>
-            <div className="flex justify-between"><span>Total Transaksi</span><span className="font-bold">{countJogja}</span></div>
-          </div>
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col justify-center items-center">
+          <div className="text-gray-500 font-bold mb-1">Total Transaksi</div>
+          <div className="text-2xl font-bold text-[#2980B9]">{totalCount}</div>
         </div>
       </div>
 
