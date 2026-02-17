@@ -256,12 +256,13 @@ const AdminReports: React.FC = () => {
       </div>
       ) : (
       <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full min-w-[600px] text-left">
+        <table className="w-full min-w-[700px] text-left">
           <thead className="bg-gray-50 text-gray-400 text-xs uppercase">
             <tr>
-              <th className="px-8 py-4">ID</th>
               <th className="px-8 py-4">Keterangan</th>
               <th className="px-8 py-4 text-right">Jumlah</th>
+              <th className="px-8 py-4 text-center">Satuan</th>
+              <th className="px-8 py-4 text-center">Kota</th>
               <th className="px-8 py-4 text-center">Tanggal</th>
               <th className="px-8 py-4 text-center">Aksi</th>
             </tr>
@@ -269,9 +270,10 @@ const AdminReports: React.FC = () => {
           <tbody className="divide-y divide-gray-50">
             {filteredExpenses.map(e => (
               <tr key={e._id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-8 py-5 font-bold">{e._id}</td>
                 <td className="px-8 py-5">{e.description}</td>
                 <td className="px-8 py-5 text-right font-bold text-red-600">Rp {e.amount?.toLocaleString()}</td>
+                <td className="px-8 py-5 text-center">{e.unit || '-'}</td>
+                <td className="px-8 py-5 text-center">{e.branch || '-'}</td>
                 <td className="px-8 py-5 text-center">{e.createdAt?.slice(0, 10)}</td>
                 <td className="px-8 py-5 text-center">
                   <button onClick={() => handleDeleteExpense(e._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-full" title="Hapus">
@@ -282,7 +284,7 @@ const AdminReports: React.FC = () => {
             ))}
             {filteredExpenses.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-8 py-20 text-center">
+                <td colSpan={6} className="px-8 py-20 text-center">
                   <Search className="w-12 h-12 mx-auto mb-4 opacity-10" />
                   <p className="text-gray-400">Belum ada data pengeluaran.</p>
                 </td>
