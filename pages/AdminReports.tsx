@@ -86,6 +86,7 @@ const AdminReports: React.FC = () => {
   const totalOmzet = filteredData.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
   const totalProfit = filteredData.reduce((sum, t) => sum + (t.totalProfit || 0), 0);
   const totalExpense = filteredExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+  const netProfit = totalProfit - totalExpense;
 
   // Daftar tanggal unik untuk filter
   const uniqueDates = Array.from(new Set(transactions.map(t => t.createdAt?.slice(0, 10)))).filter(Boolean).sort().reverse();
@@ -199,8 +200,8 @@ const AdminReports: React.FC = () => {
             <p className="text-2xl font-bold text-black">Rp {totalOmzet.toLocaleString()}</p>
         </div>
         <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-            <p className="text-xs text-gray-400 font-bold uppercase">Total Profit</p>
-            <p className="text-2xl font-bold text-green-600">Rp {totalProfit.toLocaleString()}</p>
+            <p className="text-xs text-gray-400 font-bold uppercase">Profit Setelah Pengeluaran</p>
+            <p className="text-2xl font-bold text-green-600">Rp {netProfit.toLocaleString()}</p>
         </div>
       </div>
       ) : (
