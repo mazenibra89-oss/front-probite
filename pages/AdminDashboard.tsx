@@ -50,6 +50,20 @@ const AdminDashboard: React.FC = () => {
   const totalMonthlyOmzet = monthlyTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
   const totalMonthlyTransactionsCount = monthlyTransactions.length;
 
+  // Omzet dan transaksi bulanan per cabang
+  const monthlySemarang = transactions.filter(t => {
+    const d = new Date(t.createdAt);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear && t.paid && t.city === 'Semarang';
+  });
+  const monthlyJogja = transactions.filter(t => {
+    const d = new Date(t.createdAt);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear && t.paid && t.city === 'Jogja';
+  });
+  const omzetSemarang = monthlySemarang.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+  const omzetJogja = monthlyJogja.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+  const countSemarang = monthlySemarang.length;
+  const countJogja = monthlyJogja.length;
+
   const stats = [
     { label: 'Omzet Bulan Ini', value: `Rp ${totalMonthlyOmzet.toLocaleString()}`, icon: <Wallet className="text-blue-500" />, color: 'bg-blue-50' },
     { label: 'Total Transaksi Bulan Ini', value: totalMonthlyTransactionsCount.toString(), icon: <ShoppingBag className="text-[#C0392B]" />, color: 'bg-red-50' },
@@ -173,16 +187,22 @@ const AdminDashboard: React.FC = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stats.map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-4">
-            <div className={`p-4 rounded-2xl ${stat.color}`}>{stat.icon}</div>
-            <div>
-              <p className="text-sm text-gray-500">{stat.label}</p>
-              <h4 className="text-2xl font-bold">{stat.value}</h4>
-            </div>
+      {/* Rekap per cabang */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+          <h2 className="text-xl font-bold mb-2 text-[#C0392B]">Semarang</h2>
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between"><span>Omzet Bulan Ini</span><span className="font-bold">Rp {omzetSemarang.toLocaleString()}</span></div>
+            <div className="flex justify-between"><span>Total Transaksi</span><span className="font-bold">{countSemarang}</span></div>
           </div>
-        ))}
+        </div>
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+          <h2 className="text-xl font-bold mb-2 text-[#2980B9]">Jogja</h2>
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between"><span>Omzet Bulan Ini</span><span className="font-bold">Rp {omzetJogja.toLocaleString()}</span></div>
+            <div className="flex justify-between"><span>Total Transaksi</span><span className="font-bold">{countJogja}</span></div>
+          </div>
+        </div>
       </div>
 
       <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-4 md:p-8 overflow-x-auto">
