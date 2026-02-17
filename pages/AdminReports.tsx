@@ -37,21 +37,19 @@ const AdminReports: React.FC = () => {
     fetchHistory();
   }, []);
 
-  // Fetch pengeluaran jika reportType pengeluaran
+  // Ambil data pengeluaran dari awal (bukan hanya saat reportType === 'pengeluaran')
   useEffect(() => {
-    if (reportType === 'pengeluaran') {
-      const fetchExpenses = async () => {
-        try {
-          const response = await fetch(`${API_URL}/api/expenses`);
-          const data = await response.json();
-          setExpenses(Array.isArray(data) ? data : []);
-        } catch (err) {
-          setExpenses([]);
-        }
-      };
-      fetchExpenses();
-    }
-  }, [reportType]);
+    const fetchExpenses = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/expenses`);
+        const data = await response.json();
+        setExpenses(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setExpenses([]);
+      }
+    };
+    fetchExpenses();
+  }, []);
 
   // Filter data: hanya transaksi yang sudah dibayar
   const today = new Date();
