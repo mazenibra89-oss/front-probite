@@ -272,7 +272,7 @@ const AdminReports: React.FC = () => {
               <tr key={e._id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-8 py-5">{e.description}</td>
                 <td className="px-8 py-5 text-right font-bold text-red-600">Rp {e.amount?.toLocaleString()}</td>
-                <td className="px-8 py-5 text-center">{e.unit || '-'}</td>
+                <td className="px-8 py-5 text-center">{e.quantity} {e.unit}</td>
                 <td className="px-8 py-5 text-center">{e.branch || '-'}</td>
                 <td className="px-8 py-5 text-center">{e.createdAt?.slice(0, 10)}</td>
                 <td className="px-8 py-5 text-center">
