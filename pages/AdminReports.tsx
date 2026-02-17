@@ -61,6 +61,10 @@ const AdminReports: React.FC = () => {
   if (reportType === 'pengeluaran' && expenseBranch !== 'ALL') {
     filteredExpenses = filteredExpenses.filter(e => e.branch === expenseBranch);
   }
+  // Filter pengeluaran sesuai kota (branch) untuk reportType pemasukan
+  if (reportType === 'pemasukan' && cityFilter !== 'ALL') {
+    filteredExpenses = filteredExpenses.filter(e => e.branch === cityFilter);
+  }
   let label = '';
   if (range === 'date') {
     filteredData = filteredData.filter(t => t.createdAt.startsWith(filterDate));
