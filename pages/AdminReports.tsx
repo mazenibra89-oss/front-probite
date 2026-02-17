@@ -257,8 +257,8 @@ const AdminReports: React.FC = () => {
         </table>
       </div>
       ) : (
-      <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
-        <table className="w-full text-left">
+      <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-x-auto">
+        <table className="w-full min-w-[600px] text-left">
           <thead className="bg-gray-50 text-gray-400 text-xs uppercase">
             <tr>
               <th className="px-8 py-4">ID</th>
