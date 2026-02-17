@@ -92,20 +92,18 @@ const AdminReports: React.FC = () => {
 
   // Fungsi hapus pengeluaran
   const handleDeleteExpense = async (id: string) => {
-    if (!window.confirm('Hapus pengeluaran ini secara permanen?')) return;
-    try {
-      const authData = JSON.parse(localStorage.getItem('probite_auth') || '{}');
-      const response = await fetch(`${API_URL}/api/expenses/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${authData.token}` }
-      });
-      if (response.ok) {
-        setExpenses(expenses => expenses.filter(e => e._id !== id));
-      } else {
-        alert('Gagal menghapus pengeluaran!');
+    if (window.confirm("Apakah Anda yakin ingin menghapus pengeluaran ini?")) {
+      try {
+        const response = await fetch(`${API_URL}/api/expenses/${id}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          setExpenses(expenses => expenses.filter(item => item._id !== id));
+          alert("Data berhasil dihapus");
+        }
+      } catch (err) {
+        console.error("Gagal menghapus:", err);
       }
-    } catch (err) {
-      alert('Gagal menghapus pengeluaran!');
     }
   };
 
