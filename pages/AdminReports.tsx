@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Printer, Search } from 'lucide-react';
+import { Calendar, Printer, Search, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const API_URL = 'https://api-probite.exium.my.id';
@@ -89,6 +89,25 @@ const AdminReports: React.FC = () => {
 
   // Daftar tanggal unik untuk filter
   const uniqueDates = Array.from(new Set(transactions.map(t => t.createdAt?.slice(0, 10)))).filter(Boolean).sort().reverse();
+
+  // Fungsi hapus pengeluaran
+  const handleDeleteExpense = async (id: string) => {
+    if (!window.confirm('Hapus pengeluaran ini secara permanen?')) return;
+    try {
+      const authData = JSON.parse(localStorage.getItem('probite_auth') || '{}');
+      const response = await fetch(`${API_URL}/api/expenses/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${authData.token}` }
+      });
+      if (response.ok) {
+        setExpenses(expenses => expenses.filter(e => e._id !== id));
+      } else {
+        alert('Gagal menghapus pengeluaran!');
+      }
+    } catch (err) {
+      alert('Gagal menghapus pengeluaran!');
+    }
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -246,6 +265,7 @@ const AdminReports: React.FC = () => {
               <th className="px-8 py-4">Keterangan</th>
               <th className="px-8 py-4 text-right">Jumlah</th>
               <th className="px-8 py-4 text-center">Tanggal</th>
+              <th className="px-8 py-4 text-center">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -255,11 +275,16 @@ const AdminReports: React.FC = () => {
                 <td className="px-8 py-5">{e.description}</td>
                 <td className="px-8 py-5 text-right font-bold text-red-600">Rp {e.amount?.toLocaleString()}</td>
                 <td className="px-8 py-5 text-center">{e.createdAt?.slice(0, 10)}</td>
+                <td className="px-8 py-5 text-center">
+                  <button onClick={() => handleDeleteExpense(e._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-full" title="Hapus">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </td>
               </tr>
             ))}
             {filteredExpenses.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-8 py-20 text-center">
+                <td colSpan={5} className="px-8 py-20 text-center">
                   <Search className="w-12 h-12 mx-auto mb-4 opacity-10" />
                   <p className="text-gray-400">Belum ada data pengeluaran.</p>
                 </td>
