@@ -216,6 +216,38 @@ const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Data rekap per kota */}
+      const semarangTransactions = transactions.filter(t => {
+        const d = new Date(t.createdAt);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear && t.paid && t.city === 'Semarang';
+      });
+      const jogjaTransactions = transactions.filter(t => {
+        const d = new Date(t.createdAt);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear && t.paid && t.city === 'Jogja';
+      });
+      const omzetSemarang = semarangTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+      const countSemarang = semarangTransactions.length;
+      const omzetJogja = jogjaTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+      const countJogja = jogjaTransactions.length;
+
+      {/* Rekap semua kota di bawah tombol filter */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+          <h2 className="text-xl font-bold mb-2 text-[#C0392B]">Semarang</h2>
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between"><span>Omzet Bulan Ini</span><span className="font-bold">Rp {omzetSemarang.toLocaleString()}</span></div>
+            <div className="flex justify-between"><span>Total Transaksi</span><span className="font-bold">{countSemarang}</span></div>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+          <h2 className="text-xl font-bold mb-2 text-[#2980B9]">Jogja</h2>
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between"><span>Omzet Bulan Ini</span><span className="font-bold">Rp {omzetJogja.toLocaleString()}</span></div>
+            <div className="flex justify-between"><span>Total Transaksi</span><span className="font-bold">{countJogja}</span></div>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-4 md:p-8 overflow-x-auto">
         <h3 className="text-xl font-bold mb-6">Transaksi Terbaru</h3>
         <table className="w-full min-w-[700px] text-left">

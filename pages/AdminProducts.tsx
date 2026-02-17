@@ -135,6 +135,23 @@ const AdminProducts: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* Summary Section: Omzet & Total Transaksi (dummy, since only products are available here) */}
+        <div className="flex flex-wrap gap-4 mb-4">
+          <div className="bg-[#F9EBEA] rounded-2xl p-4 flex-1 min-w-[180px]">
+            <div className="text-xs text-gray-500 font-bold mb-1">Total Produk</div>
+            <div className="text-2xl font-bold text-[#C0392B]">{products.length}</div>
+          </div>
+          <div className="bg-[#E8F8F5] rounded-2xl p-4 flex-1 min-w-[180px]">
+            <div className="text-xs text-gray-500 font-bold mb-1">Kategori Unik</div>
+            <div className="text-2xl font-bold text-[#148F77]">{[...new Set(products.map(p => p.category))].length}</div>
+          </div>
+          <div className="bg-[#FEF9E7] rounded-2xl p-4 flex-1 min-w-[180px]">
+            <div className="text-xs text-gray-500 font-bold mb-1">Stok Total</div>
+            <div className="text-2xl font-bold text-[#B7950B]">{products.reduce((sum, p) => sum + (p.stock || 0), 0)}</div>
+          </div>
+        </div>
+
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead className="text-gray-500 text-xs uppercase font-bold bg-gray-50">
