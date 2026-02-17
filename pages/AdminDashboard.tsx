@@ -40,7 +40,13 @@ const AdminDashboard: React.FC = () => {
     fetchSales();
   }, []);
 
-  // Omzet dan transaksi bulan ini (bukan harian)
+  // Filter transaksi sesuai kota yang dipilih (untuk tabel, tanpa filter bulan)
+  const filteredTransactions = transactions.filter(t => {
+    if (selectedCity === 'ALL') return true;
+    return t.city === selectedCity;
+  });
+
+  // Omzet & total transaksi hanya hitung bulan ini dan paid=true (untuk rekap)
   const now = new Date();
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
@@ -66,14 +72,14 @@ const AdminDashboard: React.FC = () => {
   const countJogja = jogjaTransactions.length;
 
   // Filter transaksi sesuai kota yang dipilih
-  const filteredTransactions = transactions.filter(t => {
+  const filteredTransactionsRekap = transactions.filter(t => {
     const d = new Date(t.createdAt);
     const isMonth = d.getMonth() === currentMonth && d.getFullYear() === currentYear && t.paid;
     if (selectedCity === 'ALL') return isMonth;
     return isMonth && t.city === selectedCity;
   });
-  const totalOmzet = filteredTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
-  const totalCount = filteredTransactions.length;
+  const totalOmzet = filteredTransactionsRekap.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+  const totalCount = filteredTransactionsRekap.length;
 
   const stats = [
     { label: 'Omzet Bulan Ini', value: `Rp ${totalMonthlyOmzet.toLocaleString()}`, icon: <Wallet className="text-blue-500" />, color: 'bg-blue-50' },
