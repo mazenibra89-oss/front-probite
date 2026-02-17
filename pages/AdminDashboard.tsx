@@ -219,47 +219,49 @@ const AdminDashboard: React.FC = () => {
 
       <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-4 md:p-8 overflow-x-auto">
         <h3 className="text-xl font-bold mb-6">Transaksi Terbaru</h3>
-        <table className="w-full min-w-[700px] text-left">
-          <thead className="bg-gray-50 text-gray-400 text-xs uppercase font-bold">
-            <tr>
-              <th className="px-8 py-4">ID</th>
-              <th className="px-8 py-4">Tanggal</th>
-              <th className="px-8 py-4">Total</th>
-              <th className="px-8 py-4">Kota</th>
-              <th className="px-8 py-4">Status</th>
-              <th className="px-8 py-4">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.slice(0, 5).map((t: any) => (
-              <tr key={t._id} className="border-b">
-                <td className="px-8 py-4">{t.queueNumber || t._id}</td>
-                <td className="px-8 py-4">{new Date(t.createdAt).toLocaleString()}</td>
-                <td className="px-8 py-4 font-bold text-green-600">Rp {t.totalAmount?.toLocaleString()}</td>
-                <td className="px-8 py-4">{t.city || '-'}</td>
-                <td className="px-8 py-4">
-                  <span className={`px-3 py-1 rounded-lg text-xs font-bold ${t.paid ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                    {t.paid ? 'Sudah Dibayar' : 'Belum Dibayar'}
-                  </span>
-                </td>
-                <td className="px-8 py-4">
-                  <button
-                    className={`px-4 py-2 rounded-xl font-bold ${t.paid ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}
-                    disabled={updatingId === t._id}
-                    onClick={() => handleTogglePaid(t._id, t.paid)}
-                  >
-                    {updatingId === t._id ? 'Menyimpan...' : t.paid ? 'Tandai Belum' : 'Tandai Sudah'}
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {transactions.length === 0 && (
+        <div className="max-h-[400px] overflow-y-auto">
+          <table className="w-full min-w-[700px] text-left">
+            <thead className="bg-gray-50 text-gray-400 text-xs uppercase font-bold">
               <tr>
-                <td colSpan={6} className="text-center py-8 text-gray-400">Belum ada transaksi.</td>
+                <th className="px-8 py-4">ID</th>
+                <th className="px-8 py-4">Tanggal</th>
+                <th className="px-8 py-4">Total</th>
+                <th className="px-8 py-4">Kota</th>
+                <th className="px-8 py-4">Status</th>
+                <th className="px-8 py-4">Aksi</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredTransactions.map((t: any) => (
+                <tr key={t._id} className="border-b">
+                  <td className="px-8 py-4">{t.queueNumber || t._id}</td>
+                  <td className="px-8 py-4">{new Date(t.createdAt).toLocaleString()}</td>
+                  <td className="px-8 py-4 font-bold text-green-600">Rp {t.totalAmount?.toLocaleString()}</td>
+                  <td className="px-8 py-4">{t.city || '-'}</td>
+                  <td className="px-8 py-4">
+                    <span className={`px-3 py-1 rounded-lg text-xs font-bold ${t.paid ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                      {t.paid ? 'Sudah Dibayar' : 'Belum Dibayar'}
+                    </span>
+                  </td>
+                  <td className="px-8 py-4">
+                    <button
+                      className={`px-4 py-2 rounded-xl font-bold ${t.paid ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}
+                      disabled={updatingId === t._id}
+                      onClick={() => handleTogglePaid(t._id, t.paid)}
+                    >
+                      {updatingId === t._id ? 'Menyimpan...' : t.paid ? 'Tandai Belum' : 'Tandai Sudah'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {filteredTransactions.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="text-center py-8 text-gray-400">Belum ada transaksi.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
