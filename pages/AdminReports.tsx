@@ -91,13 +91,13 @@ const AdminReports: React.FC = () => {
 
       {/* Control Bar */}
       <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex flex-wrap gap-4 items-center">
-         <select 
+         <input
+            type="date"
             className="font-bold border rounded-xl px-4 py-2 outline-none"
             value={filterDate}
-            onChange={(e) => { setFilterDate(e.target.value); setRange('date'); }}
-         >
-            {uniqueDates.map(d => <option key={d as string} value={d as string}>{d as string}</option>)}
-         </select>
+            onChange={e => { setFilterDate(e.target.value); setRange('date'); }}
+            max={new Date().toISOString().split('T')[0]}
+         />
          <div className="flex bg-gray-100 p-1 rounded-xl">
             {(['date', '7days', '30days'] as const).map(r => (
                 <button 
