@@ -52,18 +52,18 @@ const AdminDashboard: React.FC = () => {
   const totalMonthlyTransactionsCount = monthlyTransactions.length;
 
   // Omzet dan transaksi bulanan per cabang
-  const monthlySemarang = transactions.filter(t => {
+  const semarangTransactions = transactions.filter(t => {
     const d = new Date(t.createdAt);
     return d.getMonth() === currentMonth && d.getFullYear() === currentYear && t.paid && t.city === 'Semarang';
   });
-  const monthlyJogja = transactions.filter(t => {
+  const jogjaTransactions = transactions.filter(t => {
     const d = new Date(t.createdAt);
     return d.getMonth() === currentMonth && d.getFullYear() === currentYear && t.paid && t.city === 'Jogja';
   });
-  const omzetSemarang = monthlySemarang.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
-  const omzetJogja = monthlyJogja.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
-  const countSemarang = monthlySemarang.length;
-  const countJogja = monthlyJogja.length;
+  const omzetSemarang = semarangTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+  const countSemarang = semarangTransactions.length;
+  const omzetJogja = jogjaTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+  const countJogja = jogjaTransactions.length;
 
   // Filter transaksi sesuai kota yang dipilih
   const filteredTransactions = transactions.filter(t => {
@@ -217,19 +217,6 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Data rekap per kota */}
-      const semarangTransactions = transactions.filter(t => {
-        const d = new Date(t.createdAt);
-        return d.getMonth() === currentMonth && d.getFullYear() === currentYear && t.paid && t.city === 'Semarang';
-      });
-      const jogjaTransactions = transactions.filter(t => {
-        const d = new Date(t.createdAt);
-        return d.getMonth() === currentMonth && d.getFullYear() === currentYear && t.paid && t.city === 'Jogja';
-      });
-      const omzetSemarang = semarangTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
-      const countSemarang = semarangTransactions.length;
-      const omzetJogja = jogjaTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
-      const countJogja = jogjaTransactions.length;
-
       {/* Rekap semua kota di bawah tombol filter */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
