@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { TrendingUp, ShoppingBag, Wallet, Users, Plus, X } from 'lucide-react';
+import { getSaldo, setSaldo } from '../utils/saldo';
 
 const API_URL = 'https://api-probite.exium.my.id';
 
@@ -18,6 +19,10 @@ const AdminDashboard: React.FC = () => {
   });
   const [expenseLoading, setExpenseLoading] = useState(false);
   const [selectedCity, setSelectedCity] = useState<'ALL' | 'Semarang' | 'Jogja'>('ALL');
+
+  // State untuk saldo input
+  const [saldoInput, setSaldoInput] = useState(0);
+  const [showSaldoInput, setShowSaldoInput] = useState(false);
 
   useEffect(() => {
     const fetchSales = async () => {
@@ -81,6 +86,31 @@ const AdminDashboard: React.FC = () => {
   const totalOmzet = filteredTransactionsRekap.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
   const totalCount = filteredTransactionsRekap.length;
 
+  // Hitung omzet all time dan pengeluaran all time sesuai kota
+  const omzetAllTime = transactions.filter(t => (selectedCity === 'ALL' ? true : t.city === selectedCity) && t.paid).reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+  const pengeluaranAllTime = 0; // Akan diisi setelah fetch pengeluaran
+  const [expenses, setExpenses] = useState<any[]>([]);
+
+  // Fetch pengeluaran all time
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/expenses`);
+        const data = await res.json();
+        setExpenses(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setExpenses([]);
+      }
+    };
+    fetchExpenses();
+  }, []);
+
+  const pengeluaranFiltered = expenses.filter(e => selectedCity === 'ALL' ? true : e.branch === selectedCity);
+  const pengeluaranAll = pengeluaranFiltered.reduce((sum, e) => sum + (e.amount || 0), 0);
+
+  // Saldo = omzetAllTime + saldoInput - pengeluaranAll
+  const saldo = omzetAllTime + getSaldo(selectedCity) - pengeluaranAll;
+
   const stats = [
     { label: 'Omzet Bulan Ini', value: `Rp ${totalMonthlyOmzet.toLocaleString()}`, icon: <Wallet className="text-blue-500" />, color: 'bg-blue-50' },
     { label: 'Total Transaksi Bulan Ini', value: totalMonthlyTransactionsCount.toString(), icon: <ShoppingBag className="text-[#C0392B]" />, color: 'bg-red-50' },
@@ -136,6 +166,13 @@ const AdminDashboard: React.FC = () => {
     } finally {
       setExpenseLoading(false);
     }
+  };
+
+  // Handler tambah saldo manual
+  const handleAddSaldo = () => {
+    setSaldo(selectedCity, getSaldo(selectedCity) + saldoInput);
+    setSaldoInput(0);
+    setShowSaldoInput(false);
   };
 
   if (loading) return <div className="p-10 text-center font-bold">Memuat Data Bisnis...</div>;
@@ -212,7 +249,7 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Dua kotak: Omzet & Total Transaksi sesuai filter kota */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col justify-center items-center">
           <div className="text-gray-500 font-bold mb-1">Omzet Bulan Ini</div>
           <div className="text-2xl font-bold text-[#C0392B]">Rp {totalOmzet.toLocaleString()}</div>
@@ -220,6 +257,17 @@ const AdminDashboard: React.FC = () => {
         <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col justify-center items-center">
           <div className="text-gray-500 font-bold mb-1">Total Transaksi</div>
           <div className="text-2xl font-bold text-[#2980B9]">{totalCount}</div>
+        </div>
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col justify-center items-center relative">
+          <div className="text-gray-500 font-bold mb-1">Saldo (All Time)</div>
+          <div className="text-2xl font-bold text-green-600">Rp {saldo.toLocaleString()}</div>
+          <button onClick={() => setShowSaldoInput(v => !v)} className="absolute top-4 right-4 bg-green-100 text-green-700 rounded-full w-8 h-8 flex items-center justify-center font-bold text-xl">+</button>
+          {showSaldoInput && (
+            <div className="absolute top-12 right-4 bg-white border rounded-xl shadow-lg p-4 z-10 flex flex-col gap-2">
+              <input type="number" className="border rounded-lg px-3 py-2 w-32" value={saldoInput} onChange={e => setSaldoInput(+e.target.value)} placeholder="Tambah Saldo" />
+              <button onClick={handleAddSaldo} className="bg-green-600 text-white rounded-lg px-4 py-2 font-bold">Tambah</button>
+            </div>
+          )}
         </div>
       </div>
 
