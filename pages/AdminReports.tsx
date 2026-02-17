@@ -12,6 +12,7 @@ const AdminReports: React.FC = () => {
   const navigate = useNavigate();
   const [reportType, setReportType] = useState<'pemasukan' | 'pengeluaran'>('pemasukan');
   const [expenses, setExpenses] = useState<any[]>([]);
+  const [expenseBranch, setExpenseBranch] = useState<'ALL' | 'Semarang' | 'Jogja'>('ALL');
 
   // Ambil data dari backend
   useEffect(() => {
@@ -59,6 +60,9 @@ const AdminReports: React.FC = () => {
     filteredData = filteredData.filter(t => t.city === cityFilter);
   }
   let filteredExpenses = (expenses || []).filter(e => e.createdAt);
+  if (reportType === 'pengeluaran' && expenseBranch !== 'ALL') {
+    filteredExpenses = filteredExpenses.filter(e => e.branch === expenseBranch);
+  }
   let label = '';
   if (range === 'date') {
     filteredData = filteredData.filter(t => t.createdAt.startsWith(filterDate));
@@ -144,6 +148,23 @@ const AdminReports: React.FC = () => {
            <button
              onClick={() => setCityFilter('Jogja')}
              className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${cityFilter === 'Jogja' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}
+           >Jogja</button>
+         </div>
+         )}
+         {/* Branch Filter Buttons (only for pengeluaran) */}
+         {reportType === 'pengeluaran' && (
+         <div className="flex gap-2 ml-auto">
+           <button
+             onClick={() => setExpenseBranch('ALL')}
+             className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${expenseBranch === 'ALL' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}
+           >Semua</button>
+           <button
+             onClick={() => setExpenseBranch('Semarang')}
+             className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${expenseBranch === 'Semarang' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}
+           >Semarang</button>
+           <button
+             onClick={() => setExpenseBranch('Jogja')}
+             className={`px-4 py-2 rounded-lg font-bold text-xs border transition-all ${expenseBranch === 'Jogja' ? 'bg-[#C0392B] text-white border-[#C0392B]' : 'bg-white text-gray-500 border-gray-200'}`}
            >Jogja</button>
          </div>
          )}
